@@ -1,16 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import cv2
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-app.secret_key = "secret_key"  # Replace with your own secret key
+app.secret_key = "secret_key"  # Ganti dengan secret key Anda
 
-# Paths to save temporary images
-TEMP_DIR = 'static/images'
-UPLOAD_FOLDER = 'uploads'
+# Paths to save temporary images (ubah ke /tmp untuk Vercel)
+TEMP_DIR = '/tmp/images'
+UPLOAD_FOLDER = '/tmp/uploads'
 
+# Pastikan folder sementara ada
 if not os.path.exists(TEMP_DIR):
     os.makedirs(TEMP_DIR)
 
@@ -172,15 +173,15 @@ def upload_file():
 
             if clean_status:  # If clean, show fill level check
                 return render_template(
-                'result_clean.html',
-                message=message,
-                is_clean=clean_status,
-                original_image='images/original_image.png',
-                gray_image='images/gray_image.png',
-                blurred_image='images/blurred_image.png',
-                threshold_image='images/threshold_image.png',
-                morph_image='images/morph_image.png'
-            )
+                    'result_clean.html',
+                    message=message,
+                    is_clean=clean_status,
+                    original_image='images/original_image.png',
+                    gray_image='images/gray_image.png',
+                    blurred_image='images/blurred_image.png',
+                    threshold_image='images/threshold_image.png',
+                    morph_image='images/morph_image.png'
+                )
             else:
                 return render_template('index.html', message=message)
 
@@ -190,7 +191,7 @@ def upload_file():
 def check_fill_level():
     if request.method == 'POST':
         file = request.files.get('file')
-        if file and file.filename.endswith(('jpg', 'jpeg', 'png')):
+        if file and file.filename.endswith(('jpg', 'jpeg', 'png')):  # Valid image formats
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(file_path)
 
@@ -200,9 +201,6 @@ def check_fill_level():
 
     return redirect(url_for('upload_file'))
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 if __name__ == '__main__':
-    app.run()
+    # Jangan gunakan app.run() pada Vercel
+    pass
