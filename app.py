@@ -202,5 +202,4 @@ def check_fill_level():
     return redirect(url_for('upload_file'))
 
 if __name__ == '__main__':
-    # Jangan gunakan app.run() pada Vercel
-    pass
+    app.run()
